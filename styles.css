@@ -1,0 +1,190 @@
+/* === 1. 變數設定：加入霓虹色系 === */
+:root {
+    --bg: #0f1226;
+    --panel: rgba(255, 255, 255, 0.05); /* 半透明面板 */
+    --text: #e7e8ee;
+    --x: #ff4757; /* 更鮮豔的紅 */
+    --o: #2ed573; /* 更鮮豔的綠 */
+    --win: #ffa502;
+    --shadow-x: 0 0 20px rgba(255, 71, 87, 0.6);
+    --shadow-o: 0 0 20px rgba(46, 213, 115, 0.6);
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif; /* 優化字體 */
+    background: radial-gradient(circle at center, #1a1e3b 0%, #0f1226 100%); /* 更有層次的背景 */
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* === 2. 標題與狀態區 === */
+.container {
+    width: 100%;
+    max-width: 450px; /* 限制寬度讓畫面更精緻 */
+    text-align: center;
+}
+
+h1 {
+    margin: 0 0 10px 0;
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.status {
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    height: 30px; /* 固定高度避免跳動 */
+}
+
+#turn {
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* === 3. 優化版計分板 (橫向排列) === */
+.scoreboard {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: var(--panel);
+    backdrop-filter: blur(10px); /* 磨砂玻璃特效 */
+    padding: 15px;
+    border-radius: 16px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.scoreboard h2 {
+    display: none; /* 隱藏原本的「計分板」標題，讓畫面更簡潔 */
+}
+
+.scoreboard p {
+    margin: 0;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+}
+
+.scoreboard span {
+    font-size: 1.5rem;
+    margin-top: 5px;
+}
+
+/* 給分數加上對應顏色 */
+#score-x { color: var(--x); }
+#score-o { color: var(--o); }
+
+/* === 4. 棋盤核心設計 === */
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px;
+    margin: 0 auto;
+    width: 100%;
+    aspect-ratio: 1/1;
+}
+
+/* === 5. 格子樣式 (玻璃質感 + 互動) === */
+.cell {
+    border-radius: 12px;
+    background: var(--panel);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 4rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease; /* 平滑過渡動畫 */
+    box-shadow: inset 0 0 0 rgba(0,0,0,0.2);
+    color: var(--text);
+}
+
+/* 滑鼠移過去的效果 (UX 加分項) */
+.cell:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* 按下去的效果 */
+.cell:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+/* 填入 X 與 O 的樣式 */
+.cell.x {
+    color: var(--x);
+    text-shadow: var(--shadow-x); /* 霓虹光 */
+}
+
+.cell.o {
+    color: var(--o);
+    text-shadow: var(--shadow-o); /* 霓虹光 */
+}
+
+/* 勝利連線樣式 */
+.cell.win {
+    background: var(--win);
+    color: #fff;
+    text-shadow: none;
+    animation: pop 0.5s ease;
+}
+
+/* === 6. 按鈕美化 === */
+.controls {
+    margin-top: 25px;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+button {
+    padding: 12px 24px;
+    border-radius: 50px;
+    border: 0;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 92, 231, 0.6);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* 重置計分按鈕用不同顏色區分 */
+#reset-all {
+    background: linear-gradient(135deg, #636e72, #b2bec3);
+    box-shadow: 0 4px 15px rgba(99, 110, 114, 0.4);
+}
+
+/* === 動畫 === */
+@keyframes pop {
+    0% { transform: scale(0.8); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
